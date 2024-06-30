@@ -120,10 +120,10 @@ jobs:
         fetch-depth: 0
 
     - name: Setup PowerShell
-      shell: /usr/bin/pwsh -command ". '{0}'"
+      shell: pwsh
       run: |
-        Install-Module -Name PowerShellGet -Force -SkipPublisherCheck
-        Install-Module -Name NuGet -Force -SkipPublisherCheck
+        Install-Module -Name PowerShellGet -Force -SkipPublisherCheck -Scope AllUsers
+        Install-Module -Name NuGet -Force -SkipPublisherCheck -Scope AllUsers
         Register-PSRepository -Default -Name PSGallery -SourceLocation 'https://www.powershellgallery.com/api/v2'
 
     - name: Install hugoalh.GitHubActionsToolkit
