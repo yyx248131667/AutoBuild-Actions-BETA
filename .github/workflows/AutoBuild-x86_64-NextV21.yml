@@ -225,8 +225,6 @@ jobs:
         Firmware_Diy_Main
         Firmware_Diy
         Firmware_Diy_Other
-        patch -p1 < "$patch" || (echo "Patch failed but continuing" && cat include/netfilter.mk.rej && cat package/kernel/linux/modules/netfilter.mk.rej && cat package/network/utils/iptables/Makefile.rej)
-
 
     - name: Pre-download Libraries
       run: |
