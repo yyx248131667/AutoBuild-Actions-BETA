@@ -119,6 +119,18 @@ jobs:
       with:
         fetch-depth: 0
 
+    - name: Setup PowerShell
+      run: |
+        Install-Module -Name PowerShellGet -Force -SkipPublisherCheck
+        Install-Module -Name NuGet -Force -SkipPublisherCheck
+        Register-PSRepository -Default -Name PSGallery -SourceLocation 'https://www.powershellgallery.com/api/v2'
+      shell: pwsh
+
+    - name: Install hugoalh.GitHubActionsToolkit
+      run: |
+        Install-Module -Name hugoalh.GitHubActionsToolkit -Scope CurrentUser -Force -AllowClobber -SkipPublisherCheck
+      shell: pwsh
+      
     - name: Load Custom Variables
       run: |
         if [ -n "${{ github.event.inputs.Tempoary_CONFIG }}" ]
