@@ -122,8 +122,8 @@ jobs:
     - name: Setup PowerShell
       shell: pwsh
       run: |
-        Install-Module -Name PowerShellGet -Force -SkipPublisherCheck -Scope AllUsers
-        Install-Module -Name NuGet -Force -SkipPublisherCheck -Scope AllUsers
+        Install-Module -Name PowerShellGet -Force -SkipPublisherCheck -Scope CurrentUser
+        Install-Module -Name NuGet -Force -SkipPublisherCheck -Scope CurrentUser
         Register-PSRepository -Default -Name PSGallery -SourceLocation 'https://www.powershellgallery.com/api/v2'
 
     - name: Install hugoalh.GitHubActionsToolkit
