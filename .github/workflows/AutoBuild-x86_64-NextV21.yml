@@ -29,7 +29,7 @@ on:
         default: 'x86_64-Next'
         type: choice
         options:
-          - 'x86_64-NextV21'
+          - 'x86_64-x'
       Tempoary_FLAG:
         description: '固件标签'
         default: 'AUTO'
@@ -37,6 +37,7 @@ on:
         options:
           - 'AUTO'
           - 'NextV21'
+          - 'x'
       Tempoary_IP:
         description: '固件 IP 地址 [可选]'
         default: '192.168.2.1'
@@ -64,9 +65,9 @@ env:
 # 删除无用文件以增加编译空间
   DELETE_USELESS_FILES: true
 # 删除早期的 workflow 任务
-  DELETE_OLD_WORKFLOW: false
+  DELETE_OLD_WORKFLOW: true
 # Cache 加速编译
-  CACHE_ACCELERATE: false
+  CACHE_ACCELERATE: true
 ### 结束
 ### 请按需求修改以上内容
 
