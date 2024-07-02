@@ -44,14 +44,12 @@ Firmware_Diy_Core() {
     
     AutoBuild_Features_Patch=false
     AutoBuild_Features_Kconfig=false
-    
+Firmware_Diy_Core() {
     # 下载并执行 add_turboacc.sh 脚本
     curl -sSL https://raw.githubusercontent.com/chenmozhijin/turboacc/luci/add_turboacc.sh -o add_turboacc.sh
     bash add_turboacc.sh
     
     # 追加的脚本内容
-    # shellcheck disable=SC2016
-
     trap 'rm -rf "$TMPDIR"' EXIT
     TMPDIR=$(mktemp -d) || exit 1
 
@@ -138,17 +136,3 @@ Firmware_Diy_Core() {
     exit 0
 }
 
-# 删除了 Firmware_Diy() 函数，精简了脚本的定制化部分
-
-# 其他脚本功能继续保留或添加
-
-# 例如：
-# function1() {
-#   # some code
-# }
-
-# function2() {
-#   # some code
-# }
-
-# 脚本的其余部分继续根据需要添加和修改
