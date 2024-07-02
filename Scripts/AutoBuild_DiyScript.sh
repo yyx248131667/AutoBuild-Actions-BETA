@@ -44,7 +44,7 @@ Firmware_Diy_Core() {
     
     AutoBuild_Features_Patch=false
     AutoBuild_Features_Kconfig=false
-Firmware_Diy_Core() {
+    
     # 下载并执行 add_turboacc.sh 脚本
     curl -sSL https://raw.githubusercontent.com/chenmozhijin/turboacc/luci/add_turboacc.sh -o add_turboacc.sh
     bash add_turboacc.sh
