@@ -48,5 +48,6 @@ Firmware_Diy_Core() {
     # 增加软件包
     sed -i '$a\src-git turboacc https://github.com/chenmozhijin/turboacc' ./feeds.conf.default
     sed -i 's/KERNEL_PATCHVER:=6.1/KERNEL_PATCHVER:=6.6/g' ./target/linux/x86/Makefile
-    
+}
 
+Firmware_Diy_Core
