@@ -46,7 +46,10 @@ Firmware_Diy_Core() {
     AutoBuild_Features_Kconfig=false
     
     # 增加软件包
-    sed -i '$a\src-git turboacc https://github.com/chenmozhijin/turboacc' ./feeds.conf.default
+    if ! grep -q 'src-git turboacc' ./feeds.conf.default; then
+        sed -i '$a\src-git turboacc https://github.com/chenmozhijin/turboacc' ./feeds.conf.default
+    fi
+
     sed -i 's/KERNEL_PATCHVER:=6.1/KERNEL_PATCHVER:=6.6/g' ./target/linux/x86/Makefile
 }
 
