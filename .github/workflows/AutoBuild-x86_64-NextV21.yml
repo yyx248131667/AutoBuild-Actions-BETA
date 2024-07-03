@@ -187,6 +187,9 @@ jobs:
         sudo -E apt -y autoremove --purge
         sudo -E apt clean
         sudo timedatectl set-timezone "Asia/Shanghai"
+        sed -i '/DEPENDS/ s/kmod-fast-classifier//' ./feeds/turboacc/luci-app-turboacc/Makefile
+        sed -i '/DEPENDS/ s/kmod-shortcut-fe-cm//' ./feeds/turboacc/luci-app-turboacc/Makefile
+        sed -i '/DEPENDS/ s/kmod-shortcut-fe-drv//' ./feeds/turboacc/luci-app-turboacc/Makefile
 
     - name: Clone Openwrt Source Code
       run: |
