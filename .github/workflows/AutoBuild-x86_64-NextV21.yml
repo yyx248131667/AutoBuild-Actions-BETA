@@ -79,7 +79,6 @@ jobs:
       contents: write
 
     steps:
-
     - name: "Optimize disk space"
       if: env.DELETE_USELESS_FILES == 'true' && !cancelled()
       uses: "hugoalh/disk-space-optimizer-ghaction@v0.8.0"
@@ -121,10 +120,8 @@ jobs:
 
     - name: Load Custom Variables
       run: |
-        if [ -n "${{ github.event.inputs.Tempoary_CONFIG }}" ]
-        then
-            if [ -f "$GITHUB_WORKSPACE/Configs/${{ github.event.inputs.Tempoary_CONFIG }}" ]
-            then
+        if [ -n "${{ github.event.inputs.Tempoary_CONFIG }}" ]; then
+            if [ -f "$GITHUB_WORKSPACE/Configs/${{ github.event.inputs.Tempoary_CONFIG }}" ]; then
                 CONFIG_FILE=${{ github.event.inputs.Tempoary_CONFIG }}
             else
                 CONFIG_FILE=${{ env.CONFIG_FILE }}
@@ -132,21 +129,18 @@ jobs:
         else
             CONFIG_FILE=${{ env.CONFIG_FILE }}
         fi
-        if [ ! -f "$GITHUB_WORKSPACE/Configs/$CONFIG_FILE" ]
-        then
+        if [ ! -f "$GITHUB_WORKSPACE/Configs/$CONFIG_FILE" ]; then
             echo "CONFIG_FILE: [/Config/$CONFIG_FILE] is not detected ..."
             exit 1
         else
             echo "CONFIG_FILE: [/Config/$CONFIG_FILE]"
             echo "CONFIG_FILE=$CONFIG_FILE" >> $GITHUB_ENV
         fi
-        if [ -n "${{ github.event.inputs.Tempoary_IP }}" ]
-        then
+        if [ -n "${{ github.event.inputs.Tempoary_IP }}" ]; then
             echo "IP: [${{ github.event.inputs.Tempoary_IP }}]"
             echo "Tempoary_IP=${{ github.event.inputs.Tempoary_IP }}" >> $GITHUB_ENV
         fi
-        if [ -n "${{ github.event.inputs.Tempoary_FLAG }}" ]
-        then
+        if [ -n "${{ github.event.inputs.Tempoary_FLAG }}" ]; then
             echo "FLAG: [${{ github.event.inputs.Tempoary_FLAG }}]"
             echo "Tempoary_FLAG=${{ github.event.inputs.Tempoary_FLAG }}" >> $GITHUB_ENV
         fi
@@ -162,7 +156,6 @@ jobs:
             echo "UPLOAD_RELEASES=${{ github.event.inputs.UPLOAD_RELEASES }}" >> $GITHUB_ENV
             echo "UPLOAD_ARTIFACTS=${{ github.event.inputs.UPLOAD_ARTIFACTS }}" >> $GITHUB_ENV
             echo "UPLOAD_BIN_ARTIFACTS=${{ github.event.inputs.UPLOAD_BIN_ARTIFACTS }}" >> $GITHUB_ENV
-        fi
 
     - name: TIMED_TRIGGER
       if: env.TIMED_TRIGGER == 'true'
@@ -183,15 +176,15 @@ jobs:
         sudo chown $USER:$GROUPS /workdir
         sudo -E apt update
         sudo -E apt -y full-upgrade
-        sudo -E apt-get -y install busybox build-essential cmake asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs git-core gcc-multilib g++-multilib p7zip p7zip-full msmtp libssl-dev texinfo libreadline-dev libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint ccache curl wget vim nano python2.7 python3 python3-pip python3-ply haveged lrzsz device-tree-compiler scons antlr3 gperf intltool mkisofs rsync
+        sudo -E apt-get -y install busybox build-essential cmake asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs git-core gcc-multilib g++-multilib p7zip p7zip-full msmtp libssl-dev texinfo libreadline-dev libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint ccache curl wget vim nano python2.7 python3 python3-pip python3-ply haveged lrzsz device-tree-compiler scons antlr3 gperf intltool mkisofs rsync ca-certificates-mono
         sudo -E apt -y autoremove --purge
         sudo -E apt clean
         sudo timedatectl set-timezone "Asia/Shanghai"
-        sudo apt-get install -y ca-certificates-mono
+        echo "Listing files in feeds/turboacc/luci-app-turboacc/"
+        ls -l ./feeds/turboacc/luci-app-turboacc/
         sed -i '/DEPENDS/ s/kmod-fast-classifier//' ./feeds/turboacc/luci-app-turboacc/Makefile
         sed -i '/DEPENDS/ s/kmod-shortcut-fe-cm//' ./feeds/turboacc/luci-app-turboacc/Makefile
         sed -i '/DEPENDS/ s/kmod-shortcut-fe-drv//' ./feeds/turboacc/luci-app-turboacc/Makefile
-
 
     - name: Clone Openwrt Source Code
       run: |
@@ -200,6 +193,8 @@ jobs:
         cd openwrt
         ./scripts/feeds update -a
         ./scripts/feeds install -a
+        echo "Listing files in feeds/turboacc/luci-app-turboacc/"
+        ls -l ./feeds/turboacc/luci-app-turboacc/
 
     - name: Accelerate
       if: env.CACHE_ACCELERATE == 'true'
@@ -217,8 +212,7 @@ jobs:
         df -h
         chmod +x Scripts/AutoBuild_*.sh
         cd openwrt
-        if [ "${{ env.CACHE_ACCELERATE }}" == true ]
-        then
+        if [ "${{ env.CACHE_ACCELERATE }}" == true ]; then
             echo -e "\nCONFIG_DEVEL=y\nCONFIG_CCACHE=y\n" >> $GITHUB_WORKSPACE/Configs/$CONFIG_FILE
         fi
         cp $GITHUB_WORKSPACE/Configs/$CONFIG_FILE .config
@@ -244,19 +238,42 @@ jobs:
         make -j4 || make -j1 V=s
         [ "$?" == 0 ] && echo "Compile_Result=true" >> $GITHUB_ENV || echo "Compile_Result=false" >> $GITHUB_ENV
 
-    - name: Checkout Firmware
-      if: steps.compile.outcome == 'success' && !cancelled()
-      run: |
-        cd openwrt
-        source $GITHUB_WORKSPACE/Scripts/AutoBuild_Function.sh
-        Firmware_Diy_End
-
-    - name: Upload Firmware to Artifacts
-      uses: actions/upload-artifact@main
-      if: env.UPLOAD_ARTIFACTS == 'true' && steps.compile.outcome == 'success' && !cancelled()
+    - name: Upload Artifact
+      if: env.UPLOAD_ARTIFACTS == 'true' && steps.compile.outputs.Compile_Result == 'true' && !cancelled()
+      uses: actions/upload-artifact@v3
       with:
-        name: ${{ env.CONFIG_FILE }}_firmware_${{ env.Compile_Date }}
-        path: openwrt/bin/Firmware
+        name: ${{ github.event.inputs.Tempoary_FLAG }}_Firmware
+        path: |
+          openwrt/bin/targets
+          openwrt/bin/packages
+          openwrt/logs
+        retention-days: ${{ github.event.inputs.Artifacts_Retention }}
+
+    - name: UPLOAD_BIN_ARTIFACTS
+      if: env.UPLOAD_BIN_ARTIFACTS == 'true' && steps.compile.outputs.Compile_Result == 'true' && !cancelled()
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ github.event.inputs.Tempoary_FLAG }}_BIN
+        path: openwrt/bin
+
+    - name: UPLOAD_RELEASES
+      if: env.UPLOAD_RELEASES == 'true' && steps.compile.outputs.Compile_Result == 'true' && !cancelled()
+      uses: ncipollo/release-action@v1
+      with:
+        artifacts: |
+          openwrt/bin/targets
+          openwrt/bin/packages
+          openwrt/logs
+        token: ${{ secrets.GITHUB_TOKEN }}
+        tag: ${{ env.Compile_Date }}
+        name: OpenWrt-AutoBuild ${{ env.Display_Date }} ${{ github.event.inputs.Tempoary_FLAG }}
+        body: |
+          ## Build Information
+          **Source**: ${{ env.REPO_URL }}
+          **Branch**: ${{ env.REPO_BRANCH }}
+        draft: false
+        prerelease: false
+
 
     - name: Upload bin to Artifacts
       uses: actions/upload-artifact@main
