@@ -47,9 +47,14 @@ Firmware_Diy_Core() {
     
     # 增加软件包
     if ! grep -q 'src-git turboacc' ./feeds.conf.default; then
-        sed -i '$a\src-git turboacc https://github.com/chenmozhijin/turboacc' ./feeds.conf.default
+        echo 'src-git turboacc https://github.com/chenmozhijin/turboacc' >> ./feeds.conf.default
     fi
 
+    # 更新并安装所有 feed 索引
+    ./scripts/feeds update -a
+    ./scripts/feeds install -a
+
+    # 更改内核版本
     sed -i 's/KERNEL_PATCHVER:=6.1/KERNEL_PATCHVER:=6.6/g' ./target/linux/x86/Makefile
 }
 
