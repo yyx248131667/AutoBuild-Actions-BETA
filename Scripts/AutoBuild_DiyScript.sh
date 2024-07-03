@@ -50,15 +50,6 @@ Firmware_Diy_Core() {
         echo 'src-git turboacc https://github.com/chenmozhijin/turboacc' >> ./feeds.conf.default
     fi
 
-    # 更新并安装所有 feed 索引
-    ./scripts/feeds update -a
-    ./scripts/feeds install -a
-
-    # 移除 luci-app-turboacc Makefile 中的无效依赖项
-    sed -i '/DEPENDS/ s/kmod-fast-classifier//' ./feeds/turboacc/luci-app-turboacc/Makefile
-    sed -i '/DEPENDS/ s/kmod-shortcut-fe-cm//' ./feeds/turboacc/luci-app-turboacc/Makefile
-    sed -i '/DEPENDS/ s/kmod-shortcut-fe-drv//' ./feeds/turboacc/luci-app-turboacc/Makefile
-
     # 更改内核版本
     sed -i 's/KERNEL_PATCHVER:=6.1/KERNEL_PATCHVER:=6.6/g' ./target/linux/x86/Makefile
 }
